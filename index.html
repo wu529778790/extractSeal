@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="https://blog.shenzjd.com/img/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提取印章</title>
+    <script src="https://docs.opencv.org/4.5.0/opencv.js" type="text/javascript"></script>
+    <script src="./extractstamp.js"></script>
+    <style>
+        #imageContainer,
+        #originalImageContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        #imageContainer img,
+        #originalImageContainer img {
+            max-width: 300px;
+            max-height: 300px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            transition: transform 0.3s ease;
+        }
+
+        #imageContainer img:hover,
+        #originalImageContainer img:hover {
+            transform: scale(1.1);
+        }
+
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>选择图片</h1>
+    <input type="file" id="imageInput" accept="image/*" onchange="selectImage()">
+    <h2>原图：</h2>
+    <div id="originalImageContainer"></div>
+    <h2>提取的印章：</h2>
+    <div id="imageContainer"></div>
+    <div id="loading">处理中，请稍候...</div>
+    <script>
+        let isReady = false;
+        initOpenCV((ready) => {
+            isReady = ready;
+            console.log('OpenCV.js 已加载', isReady);
+        });
+
+        function selectImage() {
+            const file = document.getElementById('imageInput').files[0];
+            console.log('file', file);
+            if (file && isReady) {
+                showLoading();
+                displayOriginalImage(file);
+                extractStampWithFile(file, '#ff0000').then(dstImgList => {
+                    console.log('提取红色印章成功', dstImgList);
+                    displayImages(dstImgList);
+                    hideLoading();
+                }).catch(error => {
+                    console.error('处理图片时出错:', error);
+                    hideLoading();
+                });
+            } else if (!isReady) {
+                console.log('OpenCV.js 尚未加载完成，请稍后再试');
+            } else {
+                console.log('请先选择一个图片文件');
+            }
+        }
+
+        function displayOriginalImage(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const container = document.getElementById('originalImageContainer');
+                container.innerHTML = ''; // 清空之前的内容
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = '原图';
+                img.style.width = '300px';
+                img.style.height = '300px';
+                container.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function displayImages(imageList) {
+            const container = document.getElementById('imageContainer');
+            container.innerHTML = ''; // 清空之前的内容
+            imageList.forEach((imgSrc, index) => {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.alt = `提取的印章 ${index + 1}`;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                container.appendChild(img);
+            });
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
