@@ -1,0 +1,30 @@
+{
+  "name": "extractseal",
+  "version": "1.0.0",
+  "description": "基于OpenCV.js的印章提取工具，可以自动从图片中识别和提取印章图像",
+  "main": "extractstamp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "opencv",
+    "seal",
+    "stamp",
+    "image-processing",
+    "印章提取",
+    "图像处理"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "opencv.js": "^1.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wu529778790/extractSeal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wu529778790/extractSeal/issues"
+  },
+  "homepage": "https://github.com/wu529778790/extractSeal#readme"
+}
