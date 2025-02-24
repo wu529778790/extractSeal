@@ -141,99 +141,96 @@
     <div id="error-message" class="error-message"></div>
 
     <script>
-        class StampUI {
-            constructor() {
-                this.stampExtractor = new StampExtractor();
-                this.color = '#ff0000';
-                this.initializeUI();
-            }
+        // 全局变量
+        const stampExtractor = new StampExtractor();
+        let currentColor = '#ff0000';
 
-            initializeUI() {
-                // 初始化颜色选择器
-                const colorInput = document.getElementById('colorInput');
-                colorInput.addEventListener('change', (e) => this.handleColorChange(e));
+        // 工具函数
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
 
-                // 初始化图片选择器
-                const imageInput = document.getElementById('imageInput');
-                imageInput.addEventListener('change', (e) => this.handleImageSelect(e));
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
 
-                // 等待OpenCV准备就绪
-                this.stampExtractor.initOpenCV().then(() => {
-                    console.log('OpenCV.js 已加载完成');
-                }).catch(error => {
-                    this.showError('OpenCV.js 加载失败');
-                });
-            }
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
 
-            handleColorChange(event) {
-                this.color = event.target.value;
-            }
+        function hideError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
 
-            async handleImageSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                try {
-                    this.showLoading();
-                    this.displayOriginalImage(file);
-                    const stamps = await this.stampExtractor.extractFromFile(file, { color: this.color });
-                    this.displayStamps(stamps);
-                    this.hideError();
-                } catch (error) {
-                    console.error('处理图片时出错:', error);
-                    this.showError(error.message || '处理图片时出错');
-                } finally {
-                    this.hideLoading();
-                }
-            }
-
-            displayOriginalImage(file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const container = document.getElementById('originalImageContainer');
-                    container.innerHTML = '';
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = '原图';
-                    container.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-
-            displayStamps(stamps) {
-                const container = document.getElementById('imageContainer');
+        function displayOriginalImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const container = document.getElementById('originalImageContainer');
                 container.innerHTML = '';
-                stamps.forEach((stamp, index) => {
-                    const img = document.createElement('img');
-                    img.src = stamp;
-                    img.alt = `提取的印章 ${index + 1}`;
-                    container.appendChild(img);
-                });
-            }
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = '原图';
+                container.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
 
-            showLoading() {
-                document.getElementById('loading').style.display = 'block';
-            }
+        function displayStamps(stamps) {
+            const container = document.getElementById('imageContainer');
+            container.innerHTML = '';
+            stamps.forEach((stamp, index) => {
+                const img = document.createElement('img');
+                img.src = stamp;
+                img.alt = `提取的印章 ${index + 1}`;
+                container.appendChild(img);
+            });
+        }
 
-            hideLoading() {
-                document.getElementById('loading').style.display = 'none';
-            }
+        // 事件处理函数
+        function handleColorChange(event) {
+            currentColor = event.target.value;
+        }
 
-            showError(message) {
-                const errorElement = document.getElementById('error-message');
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-            }
+        async function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            hideError() {
-                document.getElementById('error-message').style.display = 'none';
+            try {
+                showLoading();
+                displayOriginalImage(file);
+                const stamps = await stampExtractor.extractFromFile(file, { color: currentColor });
+                displayStamps(stamps);
+                hideError();
+            } catch (error) {
+                console.error('处理图片时出错:', error);
+                showError(error.message || '处理图片时出错');
+            } finally {
+                hideLoading();
             }
         }
 
+        // 初始化函数
+        function initializeUI() {
+            // 初始化颜色选择器
+            const colorInput = document.getElementById('colorInput');
+            colorInput.addEventListener('change', handleColorChange);
+
+            // 初始化图片选择器
+            const imageInput = document.getElementById('imageInput');
+            imageInput.addEventListener('change', handleImageSelect);
+
+            // 等待OpenCV准备就绪
+            stampExtractor.initOpenCV().then(() => {
+                console.log('OpenCV.js 已加载完成');
+            }).catch(error => {
+                showError('OpenCV.js 加载失败');
+            });
+        }
+
         // 初始化应用
-        document.addEventListener('DOMContentLoaded', () => {
-            new StampUI();
-        });
+        document.addEventListener('DOMContentLoaded', initializeUI);
     </script>
 </body>
 
