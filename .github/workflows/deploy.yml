@@ -39,23 +39,12 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-          # 如果gh-pages分支不存在，创建一个空的gh-pages分支
-          git fetch origin gh-pages || git checkout --orphan gh-pages
-
-          # 如果gh-pages分支存在，切换到该分支
-          git checkout gh-pages || true
-
-          # 保留.git目录，但删除其他所有文件
-          find . -maxdepth 1 ! -name .git ! -name . -exec rm -rf {} \;
-
-          # 复制构建产物到根目录
-          cp -r dist/* .
-
-          # 添加.gitignore文件
-          echo "dist/" > .gitignore
-          echo "node_modules/" >> .gitignore
-
-          # 提交并推送更改
+          git fetch origin gh-pages
+          git checkout gh-pages
+          git rm -rf .
+          cp -rf /dist/* .
+          echo '/dist/' >> .gitignore
+          echo 'node_modules/' >> .gitignore
           git add .
-          git commit -m "Deploy to GitHub Pages" || echo "No changes to commit"
+          git commit -m "Deploy to GitHub Pages"
           git push -f origin gh-pages
