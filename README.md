@@ -16,6 +16,8 @@
 
 ```bash
 npm install
+# 或者使用 pnpm
+pnpm install
 ```
 
 ### 开发模式运行
@@ -50,3 +52,38 @@ npm run build
 ## 许可证
 
 MIT
+
+## GitHub Pages 自动部署
+
+本项目配置了GitHub Actions，可以在代码提交到main分支时自动构建并部署到GitHub Pages。
+
+### 如何使用
+
+1. 确保你的GitHub仓库已启用GitHub Pages功能
+   - 进入仓库设置 -> Pages
+   - 在"Build and deployment"部分，选择"GitHub Actions"作为源
+
+2. 将代码提交到main分支
+
+   ```bash
+   git add .
+   git commit -m "更新内容"
+   git push origin main
+   ```
+
+3. GitHub Actions将自动运行部署工作流
+   - 可以在仓库的Actions标签页查看部署进度
+   - 部署完成后，应用将可以通过 `https://[用户名].github.io/extractSeal/` 访问
+
+### 手动触发部署
+
+你也可以手动触发部署：
+
+1. 进入仓库的Actions标签页
+2. 选择"部署到GitHub Pages"工作流
+3. 点击"Run workflow"按钮
+
+## 注意事项
+
+- 如果你的仓库名称不是`extractSeal`，请修改`vite.config.js`中的`base`选项为你的仓库名称
+- 首次部署可能需要几分钟才能生效
