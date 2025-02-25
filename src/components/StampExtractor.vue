@@ -11,7 +11,7 @@
       <div class="control-panel">
         <div class="control-item">
           <label for="colorInput">印章颜色：</label>
-          <input type="color" id="colorInput" v-model="stampColor" />
+          <input id="colorInput" v-model="stampColor" />
         </div>
         <div class="control-item">
           <label for="imageInput">选择图片：</label>

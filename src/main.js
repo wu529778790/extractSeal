@@ -1,5 +1,4 @@
 import { createApp } from "vue";
-import "./style.css";
 import App from "./App.vue";
 
 // 不再直接导入 opencv.js
