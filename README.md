@@ -4,11 +4,12 @@
 
 ## 功能特点
 
-- 自动识别图片中的印章
-- 支持自定义印章颜色
-- 提取多个印章
-- 基于Vue 3和Vite构建
-- 使用CDN方式引入OpenCV.js (解决npm包兼容性问题)
+- 自动检测和提取图片中的圆形印章
+- 支持自定义印章颜色，默认为红色
+- 支持同时提取多个印章
+- 基于HSV颜色空间的精确颜色匹配
+- 使用霍夫圆变换进行印章形状检测
+- 网页端实时处理，无需服务器
 
 ## 安装与运行
 
@@ -32,18 +33,6 @@ npm run dev
 npm run build
 ```
 
-## 使用方法
-
-1. 选择印章颜色（默认为红色）
-2. 上传包含印章的图片
-3. 等待处理完成，查看提取的印章结果
-
-## 技术栈
-
-- Vue 3
-- Vite
-- OpenCV.js (CDN引入)
-
 ## 注意事项
 
 - 由于OpenCV.js的npm包在浏览器环境中存在兼容性问题，本项目使用CDN方式引入OpenCV.js
@@ -52,38 +41,3 @@ npm run build
 ## 许可证
 
 MIT
-
-## GitHub Pages 自动部署
-
-本项目配置了GitHub Actions，可以在代码提交到main分支时自动构建并部署到GitHub Pages。
-
-### 如何使用
-
-1. 确保你的GitHub仓库已启用GitHub Pages功能
-   - 进入仓库设置 -> Pages
-   - 在"Build and deployment"部分，选择"GitHub Actions"作为源
-
-2. 将代码提交到main分支
-
-   ```bash
-   git add .
-   git commit -m "更新内容"
-   git push origin main
-   ```
-
-3. GitHub Actions将自动运行部署工作流
-   - 可以在仓库的Actions标签页查看部署进度
-   - 部署完成后，应用将可以通过 `https://[用户名].github.io/extractSeal/` 访问
-
-### 手动触发部署
-
-你也可以手动触发部署：
-
-1. 进入仓库的Actions标签页
-2. 选择"部署到GitHub Pages"工作流
-3. 点击"Run workflow"按钮
-
-## 注意事项
-
-- 如果你的仓库名称不是`extractSeal`，请修改`vite.config.js`中的`base`选项为你的仓库名称
-- 首次部署可能需要几分钟才能生效
