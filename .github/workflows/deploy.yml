@@ -12,39 +12,31 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v3
 
-      - name: Install Pnpm
+      - name: 设置Node.js环境
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: 安装 pnpm
         uses: pnpm/action-setup@v2
         with:
           version: latest
+          run_install: false
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "19"
-          cache: "pnpm"
-
-      - name: Install dependencies
+      - name: 安装依赖
         run: pnpm install
 
-      - name: Build project
-        run: pnpm run build
+      - name: 构建项目
+        run: pnpm build
 
-      - name: Deploy to GitHub Pages
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-
-          git fetch origin gh-pages
-          git checkout gh-pages
-          git rm -rf .
-          cp -rf /dist/* .
-          echo '/dist/' >> .gitignore
-          echo 'node_modules/' >> .gitignore
-          git add .
-          git commit -m "Deploy to GitHub Pages"
-          git push -f origin gh-pages
+      - name: 部署到GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # 指定构建输出目录
+          branch: gh-pages # 部署到哪个分支
+          clean: true # 清理旧文件
