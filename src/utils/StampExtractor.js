@@ -1,4 +1,7 @@
 // StampExtractor类 - 用于从图像中提取印章
+// 不再直接导入 OpenCV.js
+// import cv from "opencv.js";
+
 class StampExtractor {
   constructor() {
     this.cvReady = false;
@@ -15,10 +18,23 @@ class StampExtractor {
         this.cvReady = true;
         resolve(true);
       } else {
-        document.addEventListener("opencv-ready", () => {
-          this.cvReady = true;
-          resolve(true);
-        });
+        // 等待OpenCV加载完成
+        const checkInterval = setInterval(() => {
+          if (typeof cv !== "undefined") {
+            clearInterval(checkInterval);
+            this.cvReady = true;
+            resolve(true);
+          }
+        }, 100);
+
+        // 设置超时，避免无限等待
+        setTimeout(() => {
+          if (!this.cvReady) {
+            clearInterval(checkInterval);
+            console.error("OpenCV.js 加载超时");
+            resolve(false);
+          }
+        }, 30000); // 30秒超时
       }
     });
   }
@@ -72,10 +88,6 @@ class StampExtractor {
   }
 
   /**
-   * 将图像转换为OpenCV的Mat对象并提取印章
-   * @private
-   */
-  /**
    * 将RGB颜色转换为HSV颜色
    * @private
    */
@@ -86,7 +98,9 @@ class StampExtractor {
 
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
-    let h, s, v = max;
+    let h,
+      s,
+      v = max;
 
     const d = max - min;
     s = max === 0 ? 0 : d / max;
@@ -133,25 +147,45 @@ class StampExtractor {
       // 创建掩码
       const maskA = new cv.Mat();
       const low = new cv.Mat(dst.rows, dst.cols, dst.type(), [lowH, 50, 50, 0]);
-      const high = new cv.Mat(dst.rows, dst.cols, dst.type(), [highH, 255, 255, 255]);
+      const high = new cv.Mat(dst.rows, dst.cols, dst.type(), [
+        highH,
+        255,
+        255,
+        255,
+      ]);
       cv.inRange(dst, low, high, maskA);
 
       // 如果色相范围跨越了0/180边界，需要创建第二个掩码
       if (lowH > highH) {
         const maskB = new cv.Mat();
         const lowB = new cv.Mat(dst.rows, dst.cols, dst.type(), [0, 50, 50, 0]);
-        const highB = new cv.Mat(dst.rows, dst.cols, dst.type(), [highH, 255, 255, 255]);
+        const highB = new cv.Mat(dst.rows, dst.cols, dst.type(), [
+          highH,
+          255,
+          255,
+          255,
+        ]);
         cv.inRange(dst, lowB, highB, maskB);
 
         const maskC = new cv.Mat();
-        const lowC = new cv.Mat(dst.rows, dst.cols, dst.type(), [lowH, 50, 50, 0]);
-        const highC = new cv.Mat(dst.rows, dst.cols, dst.type(), [179, 255, 255, 255]);
+        const lowC = new cv.Mat(dst.rows, dst.cols, dst.type(), [
+          lowH,
+          50,
+          50,
+          0,
+        ]);
+        const highC = new cv.Mat(
+          dst.rows,
+          dst.cols,
+          dst.type(),
+          [179, 255, 255, 255]
+        );
         cv.inRange(dst, lowC, highC, maskC);
 
         cv.add(maskB, maskC, mask);
         cv.add(mask, maskA, mask);
 
-        [maskB, maskC, lowB, highB, lowC, highC].forEach(m => m.delete());
+        [maskB, maskC, lowB, highB, lowC, highC].forEach((m) => m.delete());
       } else {
         maskA.copyTo(mask);
       }
@@ -159,16 +193,19 @@ class StampExtractor {
       // 创建结果图像
       const dstColor = this.hexToRgba(color);
       const result = new cv.Mat(src.rows, src.cols, cv.CV_8UC4, [0, 0, 0, 0]);
-      const colorMat = new cv.Mat(src.rows, src.cols, cv.CV_8UC4, [...dstColor.slice(0, 3), 255]);
+      const colorMat = new cv.Mat(src.rows, src.cols, cv.CV_8UC4, [
+        ...dstColor.slice(0, 3),
+        255,
+      ]);
       colorMat.copyTo(result, mask);
 
       // 清理内存
-      [src, dst, mask, maskA, low, high, colorMat].forEach(m => m.delete());
+      [src, dst, mask, maskA, low, high, colorMat].forEach((m) => m.delete());
 
       return result;
     } catch (error) {
       // 发生错误时清理内存
-      [src, dst, mask].forEach(m => m.delete());
+      [src, dst, mask].forEach((m) => m.delete());
       throw error;
     }
   }
@@ -184,7 +221,7 @@ class StampExtractor {
       cv.GaussianBlur(dst, dst, new cv.Size(5, 5), 2, 2);
 
       const circles = this.detectCircles(dst);
-      const stamps = circles.map(circle => this.cropCircle(cvMat, circle));
+      const stamps = circles.map((circle) => this.cropCircle(cvMat, circle));
 
       cvMat.delete();
       dst.delete();
@@ -223,7 +260,7 @@ class StampExtractor {
         detectedCircles.push({
           x: circles.data32F[i * 3],
           y: circles.data32F[i * 3 + 1],
-          radius: circles.data32F[i * 3 + 2]
+          radius: circles.data32F[i * 3 + 2],
         });
       }
 
@@ -247,31 +284,46 @@ class StampExtractor {
     try {
       // 裁剪图像
       const rect = new cv.Rect(
-        Math.max(0, Math.min(Math.round(circle.x - newRadius), cvMat.cols - size)),
-        Math.max(0, Math.min(Math.round(circle.y - newRadius), cvMat.rows - size)),
+        Math.max(
+          0,
+          Math.min(Math.round(circle.x - newRadius), cvMat.cols - size)
+        ),
+        Math.max(
+          0,
+          Math.min(Math.round(circle.y - newRadius), cvMat.rows - size)
+        ),
         Math.min(size, cvMat.cols),
         Math.min(size, cvMat.rows)
       );
 
-      const croppedMat = cvMat.roi(rect);
-      const mask = new cv.Mat.zeros(rect.height, rect.width, cv.CV_8UC1);
-      const center = new cv.Point(rect.width / 2, rect.height / 2);
-      cv.circle(mask, center, Math.round(newRadius), new cv.Scalar(255, 255, 255), -1);
+      const cropped = new cv.Mat();
+      cvMat.roi(rect).copyTo(cropped);
 
+      // 创建圆形掩码
+      const mask = new cv.Mat.zeros(cropped.rows, cropped.cols, cv.CV_8UC1);
+      const center = new cv.Point(cropped.cols / 2, cropped.rows / 2);
+      const radius = Math.min(cropped.cols, cropped.rows) / 2;
+      cv.circle(mask, center, radius, new cv.Scalar(255, 255, 255, 255), -1);
+
+      // 应用掩码
       const result = new cv.Mat();
-      cv.bitwise_and(croppedMat, croppedMat, result, mask);
+      const alpha = new cv.Mat.zeros(cropped.rows, cropped.cols, cv.CV_8UC1);
+      const color = new cv.Scalar(0, 0, 0, 0);
+      cv.bitwise_not(mask, alpha);
+      cv.subtract(alpha, alpha, alpha);
+      cropped.copyTo(result, mask);
 
       // 转换为base64
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = result.cols;
       canvas.height = result.rows;
       cv.imshow(canvas, result);
-      const dataURL = canvas.toDataURL("image/png");
+      const base64 = canvas.toDataURL("image/png");
 
       // 清理内存
-      [croppedMat, mask, result].forEach(m => m.delete());
+      [cropped, mask, result, alpha].forEach((m) => m.delete());
 
-      return dataURL;
+      return base64;
     } catch (error) {
       throw error;
     }
@@ -285,11 +337,8 @@ class StampExtractor {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
-    const a = hex.length === 9 ? parseInt(hex.slice(7, 9), 16) : 255;
-    return [r, g, b, a];
+    return [r, g, b, 255];
   }
 }
 
-// 导出StampExtractor类
-window.StampExtractor = StampExtractor;
-
+export default StampExtractor;
