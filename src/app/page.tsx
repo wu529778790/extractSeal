@@ -44,8 +44,7 @@ export default function Home() {
         throw new Error(data.error || "处理失败");
       }
 
-      // TODO: 处理返回的印章图片
-      setResult(data.fileName);
+      setResult(data.image);
     } catch (err) {
       setError(err instanceof Error ? err.message : "处理失败");
     } finally {
@@ -101,7 +100,7 @@ export default function Home() {
           <h2 className="text-xl font-semibold mb-4">提取结果</h2>
           <div className="relative w-64 h-64">
             <Image
-              src={`/uploads/${result}`}
+              src={result}
               alt="提取的印章"
               fill
               className="object-contain"
