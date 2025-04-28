@@ -1,5 +1,7 @@
 # 印章提取工具 (Vite + Vue版本)
 
+DeepWiki: https://deepwiki.com/wu529778790/extractSeal
+
 基于OpenCV.js的印章提取工具，可以自动从图片中识别和提取印章图像。
 
 ![20250225183255](https://gcore.jsdelivr.net/gh/wu529778790/image/blog/20250225183255.png)
