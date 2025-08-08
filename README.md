@@ -2,18 +2,18 @@
 
 DeepWiki: <https://deepwiki.com/wu529778790/extractSeal>
 
-基于 OpenCV.js 的印章提取工具与库，可以自动从图片中识别和提取印章图像。
+基于 OpenCV.js 的印章提取库，可从图片中自动识别并提取印章图像。内置 OpenCV 资源，默认同源加载，适合内网环境。
 
 ![20250225183255](https://gcore.jsdelivr.net/gh/wu529778790/image/blog/20250225183255.png)
 
 ## 功能特点
 
-- 自动检测和提取图片中的圆形印章
-- 支持自定义印章颜色，默认为红色
+- 自动检测并提取图片中的圆形印章
+- 支持自定义印章颜色（默认红色）
 - 支持同时提取多个印章
-- 基于HSV颜色空间的精确颜色匹配
-- 使用霍夫圆变换进行印章形状检测
-- 网页端实时处理，无需服务器
+- 基于 HSV 颜色空间进行颜色筛选
+- 使用霍夫圆变换进行形状检测
+- 浏览器端实时处理，无需服务器
 
 ## 作为库使用（NPM）
 
@@ -23,11 +23,7 @@ DeepWiki: <https://deepwiki.com/wu529778790/extractSeal>
 npm i extract-seal
 ```
 
-浏览器在使用时需先加载 OpenCV.js（提供全局 `cv`），例如：
-
-```html
-<script src="https://docs.opencv.org/4.5.0/opencv.js"></script>
-```
+无需手动引入外部脚本，库会在 `initOpenCV` 时自动加载内置的 OpenCV 资源（同源 URL）。
 
 使用示例：
 
@@ -35,6 +31,7 @@ npm i extract-seal
 import StampExtractor from 'extract-seal'
 
 const extractor = new StampExtractor()
+// 默认 60s 超时；也可自定义 { timeoutMs, url }
 await extractor.initOpenCV()
 
 // 从 File 提取
@@ -44,36 +41,47 @@ const stamps = await extractor.extractFromFile(file, { color: '#ff0000' })
 const img = new Image()
 img.src = 'xxx.png'
 img.onload = () => {
-  const result = extractor.extractFromImage(img, { color: '#ff0000' })
+  const list = extractor.extractFromImage(img, { color: '#ff0000' })
 }
 ```
 
-## 演示项目（本仓库）安装与运行
+### API 概览
 
-### 安装依赖
+- `new StampExtractor()`
+- `initOpenCV(options?) => Promise<boolean>`
+  - `options.url?: string` 自定义 OpenCV 脚本地址（一般不需要设置）
+  - `options.timeoutMs?: number` 初始化超时（默认 60000）
+- `extractFromFile(file: File, options?) => Promise<string[]>`
+- `extractFromImage(img: HTMLImageElement, options?) => string[]`
+  - `options.color?: string` 目标印章颜色，十六进制，如 `#ff0000`
+
+类型声明已内置于 `types/index.d.ts`。
+
+## 演示项目（本仓库）
+
+目录结构：
+
+- `lib/`：npm 包源码（库入口 `lib/index.js`）
+- `src/`：演示代码（开发时挂载为页面）
+
+### 安装与启动
 
 ```bash
 npm install
-# 或者使用 pnpm
-pnpm install
-```
-
-### 开发模式运行
-
-```bash
 npm run dev
 ```
 
-### 构建生产版本（库）
+### 构建库产物
 
 ```bash
 npm run build
+# 产物：dist/stamp-extractor.es.js、dist/stamp-extractor.umd.js
 ```
 
 ## 注意事项
 
-- 由于 OpenCV.js 的 npm 包在浏览器环境中存在兼容性问题，本项目使用 CDN 方式引入 OpenCV.js，并通过全局 `cv` 使用。
-- 首次加载可能需要等待OpenCV.js下载完成
+- 默认同源加载内置 OpenCV 资源，无需联网；首次加载可能稍慢。
+- 如果你确实要走自定义地址，可 `initOpenCV({ url: '...' })` 明确指定。
 
 ## 许可证
 
