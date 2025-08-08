@@ -14,13 +14,11 @@ export default defineConfig({
       formats: ["es", "umd"],
     },
     rollupOptions: {
-      // 不打包外部依赖，opencv 由运行时动态 import 或 CDN 注入
-      external: ["@techstark/opencv-js"],
+      // 保持默认（不 external），我们用 ?url 注入静态资源
+      external: [],
       output: {
         exports: "named",
-        globals: {
-          "@techstark/opencv-js": "cv",
-        },
+        globals: {},
       },
     },
     sourcemap: true,

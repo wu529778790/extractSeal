@@ -1,4 +1,4 @@
 import { createApp } from "vue";
-import Index from "./index.vue";
+import index from "./index.vue";
 
-createApp(Index).mount("#app");
+createApp(index).mount("#app");
