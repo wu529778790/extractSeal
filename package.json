@@ -30,6 +30,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "build:demo": "vite build --config vite.demo.config.js",
+    "preview:demo": "vite preview --config vite.demo.config.js --strictPort --port 5174",
     "prepublishOnly": "npm run build",
     "test": "echo 'no tests'"
   },
