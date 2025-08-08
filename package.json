@@ -26,6 +26,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wu529778790/extractSeal.git"
+  },
+  "homepage": "https://github.com/wu529778790/extractSeal#readme",
+  "bugs": {
+    "url": "https://github.com/wu529778790/extractSeal/issues"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
