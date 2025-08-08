@@ -30,7 +30,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test": "echo 'no tests'"
   },
   "keywords": [
     "opencv",

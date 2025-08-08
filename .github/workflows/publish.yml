@@ -2,7 +2,7 @@ name: Auto Test, Version & Publish
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, npm]
   workflow_dispatch:
 
 jobs:

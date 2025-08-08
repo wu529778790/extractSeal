@@ -134,7 +134,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import StampExtractorUtil from "../utils/StampExtractor";
+import StampExtractorUtil from "../lib/StampExtractor.js";
 
 // 响应式状态
 const stampColor = ref("#ff0000");
