@@ -1,7 +1,4 @@
 import { createApp } from "vue";
-import App from "./App.vue";
+import index from "./index.vue";
 
-// 不再直接导入 opencv.js
-// import "opencv.js";
-
-createApp(App).mount("#app");
+createApp(index).mount("#app");

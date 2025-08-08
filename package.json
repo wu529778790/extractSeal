@@ -1,17 +1,53 @@
 {
-  "name": "extractseal-vue",
-  "private": true,
-  "version": "0.0.0",
+  "name": "extract-seal",
+  "private": false,
+  "version": "0.1.0",
+  "description": "基于 OpenCV.js 的浏览器印章提取库",
   "type": "module",
+  "main": "dist/stamp-extractor.umd.js",
+  "module": "dist/stamp-extractor.es.js",
+  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./dist/stamp-extractor.es.js",
+      "require": "./dist/stamp-extractor.umd.js"
+    }
+  },
+  "unpkg": "dist/stamp-extractor.umd.js",
+  "jsdelivr": "dist/stamp-extractor.umd.js",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "types",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build",
+    "test": "echo 'no tests'"
   },
+  "keywords": [
+    "opencv",
+    "seal",
+    "stamp",
+    "extract",
+    "image-processing"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
-    "vue": "^3.5.13"
+    "@techstark/opencv-js": "4.11.0-release.1"
   },
+  "peerDependencies": {},
   "devDependencies": {
+    "vue": "^3.5.13",
     "@vitejs/plugin-vue": "^5.2.1",
     "vite": "^6.2.0"
   }

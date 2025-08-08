@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      vue:
-        specifier: ^3.5.13
-        version: 3.5.13
+      '@techstark/opencv-js':
+        specifier: 4.11.0-release.1
+        version: 4.11.0-release.1
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
@@ -18,6 +18,9 @@ importers:
       vite:
         specifier: ^6.2.0
         version: 6.2.0
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.13
 
 packages:
 
@@ -295,6 +298,9 @@ packages:
     resolution: {integrity: sha512-U0FaE5O1BCpZSeE6gBl3c5ObhePQSfk9vDRToMmTkbhCOgW4jqvtS5LGyQ76L1fH8sM0keRp4uDTsbjiUyjk0g==}
     cpu: [x64]
     os: [win32]
+
+  '@techstark/opencv-js@4.11.0-release.1':
+    resolution: {integrity: sha512-d5h8cMiSbbnme5+I1ta4++EJ3mkca1zkVNh0A4+5ASJYOmO5OhVPRX3oPnNzs9I3KyGVX7QeFU8gVoI7I0w8RQ==}
 
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
@@ -575,6 +581,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.34.8':
     optional: true
+
+  '@techstark/opencv-js@4.11.0-release.1': {}
 
   '@types/estree@1.0.6': {}
 
