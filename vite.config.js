@@ -14,13 +14,12 @@ export default defineConfig({
       formats: ["es", "umd"],
     },
     rollupOptions: {
-      // 不打包外部依赖（这里没有直接依赖）。OpenCV 通过全局变量 cv 提供。
-      external: [],
+      // 不打包外部依赖，opencv 由运行时动态 import 或 CDN 注入
+      external: ["@techstark/opencv-js"],
       output: {
         exports: "named",
         globals: {
-          // 如果未来以 npm 包形式引入 opencv.js，可在此声明全局映射
-          // "opencv.js": "cv",
+          "@techstark/opencv-js": "cv",
         },
       },
     },
