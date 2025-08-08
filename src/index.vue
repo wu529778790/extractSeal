@@ -55,16 +55,15 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import StampExtractor from "../lib/StampExtractor.js";
+import { initOpenCV, extractFromFile } from "../lib/index.js";
 
 const cvReady = ref(false);
 const error = ref("");
 const stamps = ref([]);
-const extractor = new StampExtractor();
 
 onMounted(async () => {
   try {
-    const ok = await extractor.initOpenCV({ timeoutMs: 60000 });
+    const ok = await initOpenCV({ timeoutMs: 60000 });
     // 兼容 cv 作为 Promise 的情况
     if (window.cv && typeof window.cv.then === "function") {
       await window.cv; // resolve 后 window.cv 会变成模块对象
@@ -80,8 +79,7 @@ function handleFile(e) {
   if (!file) return;
   error.value = "";
   stamps.value = [];
-  extractor
-    .extractFromFile(file, { color: "#ff0000" })
+  extractFromFile(file, { color: "#ff0000" })
     .then((list) => (stamps.value = list))
     .catch((err) => (error.value = err?.message || "处理失败"));
 }

@@ -28,32 +28,33 @@ npm i extract-seal
 使用示例：
 
 ```js
-import StampExtractor from 'extract-seal'
+import { initOpenCV, extractFromFile, extractFromImage } from 'extract-seal'
 
-const extractor = new StampExtractor()
 // 默认 60s 超时；也可自定义 { timeoutMs, url }
-await extractor.initOpenCV()
+await initOpenCV()
 
 // 从 File 提取
-const stamps = await extractor.extractFromFile(file, { color: '#ff0000' })
+const stamps = await extractFromFile(file, { color: '#ff0000' })
 
 // 或从 HTMLImageElement 提取
 const img = new Image()
 img.src = 'xxx.png'
-img.onload = () => {
-  const list = extractor.extractFromImage(img, { color: '#ff0000' })
+img.onload = async () => {
+  await initOpenCV()
+  const list = extractFromImage(img, { color: '#ff0000' })
 }
 ```
 
 ### API 概览
 
-- `new StampExtractor()`
 - `initOpenCV(options?) => Promise<boolean>`
   - `options.url?: string` 自定义 OpenCV 脚本地址（一般不需要设置）
   - `options.timeoutMs?: number` 初始化超时（默认 60000）
 - `extractFromFile(file: File, options?) => Promise<string[]>`
 - `extractFromImage(img: HTMLImageElement, options?) => string[]`
   - `options.color?: string` 目标印章颜色，十六进制，如 `#ff0000`
+
+兼容：仍保留 `default` 导出的 `StampExtractor` 类，可按旧用法继续使用。
 
 类型声明已内置于 `types/index.d.ts`。
 
