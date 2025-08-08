@@ -1,10 +1,6 @@
 # 印章提取库 / 演示 (Vite + Vue)
 
-DeepWiki: <https://deepwiki.com/wu529778790/extractSeal>
-
 基于 OpenCV.js 的印章提取库，可从图片中自动识别并提取印章图像。内置 OpenCV 资源，默认同源加载，适合内网环境。
-
-![20250225183255](https://gcore.jsdelivr.net/gh/wu529778790/image/blog/20250225183255.png)
 
 ## 功能特点
 
