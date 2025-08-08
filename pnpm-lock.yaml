@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      vue:
-        specifier: ^3.5.13
-        version: 3.5.13
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
@@ -18,6 +14,9 @@ importers:
       vite:
         specifier: ^6.2.0
         version: 6.2.0
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.13
 
 packages:
 
