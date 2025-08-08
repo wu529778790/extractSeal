@@ -45,6 +45,15 @@ img.onload = async () => {
 }
 ```
 
+也可使用默认导出对象：
+
+```js
+import ExtractSeal from 'extract-seal'
+
+await ExtractSeal.initOpenCV()
+const stamps = await ExtractSeal.extractFromFile(file, { color: '#ff0000' })
+```
+
 ### API 概览
 
 - `initOpenCV(options?) => Promise<boolean>`
@@ -54,9 +63,42 @@ img.onload = async () => {
 - `extractFromImage(img: HTMLImageElement, options?) => string[]`
   - `options.color?: string` 目标印章颜色，十六进制，如 `#ff0000`
 
-兼容：仍保留 `default` 导出的 `StampExtractor` 类，可按旧用法继续使用。
+低阶算法方法（命名导出，调用前需先 `await initOpenCV()`）：
+
+- `extractStampToMat(img: HTMLImageElement, color: string) => cv.Mat`
+- `extractCircles(mat: cv.Mat) => string[]`（返回裁剪后的 PNG base64 列表）
+- `detectCircles(mat: cv.Mat) => { x: number; y: number; radius: number }[]`
+- `cropCircle(mat: cv.Mat, circle) => string`（返回 PNG base64）
+- `rgbToHsv(r, g, b) => [h, s, v]`
+- `hexToRgba(hex) => [r, g, b, a]`
+
+默认导出为一个对象（非类），包含上述同名方法，方便按旧习惯 `import ExtractSeal from 'extract-seal'` 直接使用。
 
 类型声明已内置于 `types/index.d.ts`。
+
+### 通过 `<script>` 使用（UMD）
+
+构建后可直接在浏览器中通过全局变量使用：
+
+```html
+<script src="/dist/stamp-extractor.umd.js"></script>
+<script>
+  // UMD 全局名：StampExtractor
+  StampExtractor.initOpenCV().then(() => {
+    // 传入 HTMLImageElement，或使用 extractFromFile 处理 File
+    const list = StampExtractor.extractFromImage(img, { color: '#ff0000' })
+    console.log(list)
+  })
+  
+  // 低阶函数同样可用
+  // const mat = StampExtractor.extractStampToMat(img, '#ff0000')
+  // const circles = StampExtractor.detectCircles(mat)
+  // ...
+  
+  // 注意：请先 initOpenCV 再调用算法函数
+  
+  </script>
+```
 
 ## 演示项目（本仓库）
 
