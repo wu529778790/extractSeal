@@ -1,7 +1,7 @@
 {
   "name": "extract-seal",
   "private": false,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "基于 OpenCV.js 的浏览器印章提取库",
   "type": "module",
   "main": "dist/stamp-extractor.umd.js",
