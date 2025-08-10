@@ -1,4 +1,4 @@
-# 印章提取库 / 演示 (Vite + Vue)
+# 印章提取库
 
 基于 OpenCV.js 的印章提取库，可从图片中自动识别并提取印章图像。内置 OpenCV 资源，默认同源加载，适合内网环境。
 
@@ -95,52 +95,3 @@ const stamps = await ExtractSeal.extractFromFile(file, { color: '#ff0000' })
   
   </script>
 ```
-
-## 演示项目（本仓库）
-
-目录结构：
-
-- `lib/`：npm 包源码（库入口 `lib/index.js`）
-- `src/`：演示代码（开发时挂载为页面）
-
-### 安装与启动
-
-```bash
-npm install
-npm run dev
-```
-
-### 构建库产物
-
-```bash
-npm run build
-# 产物：dist/stamp-extractor.es.js、dist/stamp-extractor.umd.js
-```
-
-### 构建与预览 Demo（不影响库产物）
-
-```bash
-# 本地构建 demo 到 dist-demo
-npm run build:demo
-
-# 本地预览 demo（默认端口 5174）
-npm run preview:demo
-```
-
-### GitHub Pages 自动部署
-
-本仓库已内置工作流 `.github/workflows/gh-pages.yml`，在推送到 `main` 时：
-
-- 使用独立配置 `vite.demo.config.js` 构建 demo 到 `dist-demo`
-- 自动部署到 GitHub Pages（base 为仓库名）
-
-首次启用请在仓库 Settings → Pages 中将 Source 设为 GitHub Actions。
-
-## 注意事项
-
-- 默认同源加载内置 OpenCV 资源，无需联网；首次加载可能稍慢。
-- 如果你确实要走自定义地址，可 `initOpenCV({ url: '...' })` 明确指定。
-
-## 许可证
-
-MIT
