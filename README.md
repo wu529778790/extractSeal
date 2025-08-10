@@ -1,8 +1,8 @@
 # extract-seal｜浏览器印章提取（OpenCV.js）
 
-基于 OpenCV.js 的轻量印章提取库，从图片中自动识别并裁剪圆形印章。内置并同源加载 OpenCV 脚本，适合内网/离线环境。
+基于 OpenCV.js 的轻量印章提取库，从图片中自动识别并裁剪圆形印章。内置并同源加载 OpenCV 脚本.
 
-Demo（原图在左｜提取结果在右）：`https://wu529778790.github.io/extractSeal/`
+Demo：<https://wu529778790.github.io/extractSeal/>
 
 ## 亮点
 
@@ -49,25 +49,43 @@ await ExtractSeal.initOpenCV()
 const stamps = await ExtractSeal.extractFromFile(file, { color: '#ff0000' })
 ```
 
-## API（精简）
+## API
 
-- `initOpenCV(options?) => Promise<boolean>`
-  - `options.url?: string` 自定义 OpenCV 脚本地址（一般无需设置）
-  - `options.timeoutMs?: number` 超时，默认 `60000`
-- `extractFromFile(file: File, options?) => Promise<string[]>`
-- `extractFromImage(img: HTMLImageElement, options?) => string[]`
-  - `options.color?: string` 目标印章颜色（十六进制），如 `#ff0000`
+### 高阶 API
 
-低阶方法（调用前需确保已 `await initOpenCV()`）：
+| 函数 | 签名 | 说明 | 返回 |
+| --- | --- | --- | --- |
+| `initOpenCV` | `(options?) => Promise<boolean>` | 加载并初始化 OpenCV（内置同源脚本） | 是否成功 |
+| `extractFromFile` | `(file: File, options?) => Promise<string[]>` | 从文件中提取印章 | PNG base64 数组 |
+| `extractFromImage` | `(img: HTMLImageElement, options?) => string[]` | 从 `<img>` 元素提取印章 | PNG base64 数组 |
 
-- `extractStampToMat(img: HTMLImageElement, color: string) => cv.Mat`
-- `extractCircles(mat: cv.Mat) => string[]`（裁剪后 PNG base64 列表）
-- `detectCircles(mat: cv.Mat) => { x: number; y: number; radius: number }[]`
-- `cropCircle(mat: cv.Mat, circle) => string`（PNG base64）
-- `rgbToHsv(r, g, b) => [h, s, v]`
-- `hexToRgba(hex) => [r, g, b, a]`
+### 选项
 
-类型声明：已内置于 `types/index.d.ts`。
+OpenCVLoadOptions（`initOpenCV`）
+
+| 字段 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `url` | `string` | 内置同源地址 | 自定义 OpenCV.js 脚本地址（一般无需设置） |
+| `timeoutMs` | `number` | `60000` | 初始化超时毫秒数 |
+
+ExtractOptions（`extractFromFile`/`extractFromImage`）
+
+| 字段 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `color` | `string` | `#ff0000` | 目标印章颜色（十六进制） |
+
+### 低阶方法（需先 `await initOpenCV()`）
+
+| 函数 | 签名 | 说明 |
+| --- | --- | --- |
+| `extractStampToMat` | `(img: HTMLImageElement, color: string) => cv.Mat` | 颜色筛选后输出对应 `cv.Mat` |
+| `extractCircles` | `(mat: cv.Mat) => string[]` | 基于圆检测裁剪，输出 PNG base64 数组 |
+| `detectCircles` | `(mat: cv.Mat) => { x: number; y: number; radius: number }[]` | 返回检测到的圆参数列表 |
+| `cropCircle` | `(mat: cv.Mat, circle) => string` | 将圆区域裁剪为透明底 PNG（base64） |
+| `rgbToHsv` | `(r: number, g: number, b: number) => [number, number, number]` | RGB 转 HSV（OpenCV 标准量化） |
+| `hexToRgba` | `(hex: string) => [number, number, number, number]` | 十六进制颜色转 RGBA |
+
+类型声明已内置于 `types/index.d.ts`。
 
 ## 浏览器直连（CDN/UMD）
 
