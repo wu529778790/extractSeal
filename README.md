@@ -71,27 +71,3 @@ const stamps = await ExtractSeal.extractFromFile(file, { color: '#ff0000' })
 默认导出为一个对象（非类），包含上述同名方法，方便按旧习惯 `import ExtractSeal from 'extract-seal'` 直接使用。
 
 类型声明已内置于 `types/index.d.ts`。
-
-### 通过 `<script>` 使用（UMD）
-
-构建后可直接在浏览器中通过全局变量使用：
-
-```html
-<script src="/dist/stamp-extractor.umd.js"></script>
-<script>
-  // UMD 全局名：StampExtractor
-  StampExtractor.initOpenCV().then(() => {
-    // 传入 HTMLImageElement，或使用 extractFromFile 处理 File
-    const list = StampExtractor.extractFromImage(img, { color: '#ff0000' })
-    console.log(list)
-  })
-  
-  // 低阶函数同样可用
-  // const mat = StampExtractor.extractStampToMat(img, '#ff0000')
-  // const circles = StampExtractor.detectCircles(mat)
-  // ...
-  
-  // 注意：请先 initOpenCV 再调用算法函数
-  
-  </script>
-```
